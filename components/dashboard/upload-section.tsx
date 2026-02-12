@@ -1,53 +1,72 @@
-"use client"
+"use client";
 
-import { useState, useCallback } from "react"
-import { useVoters } from "@/lib/voter-context"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Upload, FileText, CheckCircle2, AlertCircle, Info } from "lucide-react"
+import { useState, useCallback } from "react";
+import { useVoters } from "@/lib/voter-context";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Upload,
+  FileText,
+  CheckCircle2,
+  AlertCircle,
+  Info,
+} from "lucide-react";
 
 export function UploadSection() {
-  const { loadCsvData, voters, isUsingCsvData } = useVoters()
-  const [dragActive, setDragActive] = useState(false)
-  const [uploadStatus, setUploadStatus] = useState<"idle" | "success" | "error">("idle")
-  const [uploadMessage, setUploadMessage] = useState("")
+  const { loadCsvData, voters, isUsingCsvData } = useVoters();
+  const [dragActive, setDragActive] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
+  const [uploadMessage, setUploadMessage] = useState("");
 
-  const handleFile = useCallback((file: File) => {
-    if (!file.name.endsWith(".csv")) {
-      setUploadStatus("error")
-      setUploadMessage("Please upload a CSV file.")
-      return
-    }
-
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      const text = e.target?.result as string
-      if (text) {
-        try {
-          loadCsvData(text)
-          setUploadStatus("success")
-          setUploadMessage(`Successfully loaded data from ${file.name}`)
-        } catch {
-          setUploadStatus("error")
-          setUploadMessage("Failed to parse CSV file. Please check the format.")
-        }
+  const handleFile = useCallback(
+    (file: File) => {
+      if (!file.name.endsWith(".csv")) {
+        setUploadStatus("error");
+        setUploadMessage("Please upload a CSV file.");
+        return;
       }
-    }
-    reader.readAsText(file)
-  }, [loadCsvData])
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    setDragActive(false)
-    const file = e.dataTransfer.files[0]
-    if (file) handleFile(file)
-  }, [handleFile])
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const text = e.target?.result as string;
+        if (text) {
+          try {
+            loadCsvData(text);
+            setUploadStatus("success");
+            setUploadMessage(`Successfully loaded data from ${file.name}`);
+          } catch {
+            setUploadStatus("error");
+            setUploadMessage(
+              "Failed to parse CSV file. Please check the format.",
+            );
+          }
+        }
+      };
+      reader.readAsText(file);
+    },
+    [loadCsvData],
+  );
 
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) handleFile(file)
-  }, [handleFile])
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setDragActive(false);
+      const file = e.dataTransfer.files[0];
+      if (file) handleFile(file);
+    },
+    [handleFile],
+  );
+
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) handleFile(file);
+    },
+    [handleFile],
+  );
 
   return (
     <div className="flex flex-col gap-4">
@@ -67,7 +86,10 @@ export function UploadSection() {
                   ? "border-primary bg-primary/5"
                   : "border-border hover:border-primary/50"
               }`}
-              onDragOver={(e) => { e.preventDefault(); setDragActive(true) }}
+              onDragOver={(e) => {
+                e.preventDefault();
+                setDragActive(true);
+              }}
               onDragLeave={() => setDragActive(false)}
               onDrop={handleDrop}
             >
@@ -90,7 +112,12 @@ export function UploadSection() {
                     className="hidden"
                     onChange={handleInputChange}
                   />
-                  <Button variant="outline" size="sm" asChild className="cursor-pointer">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    asChild
+                    className="cursor-pointer"
+                  >
                     <span>Choose CSV File</span>
                   </Button>
                 </label>
@@ -115,7 +142,7 @@ export function UploadSection() {
               </div>
             )}
 
-            {/* Current Data Info */}
+            {/* Current Data Info
             <div className="flex items-start gap-3 p-4 rounded-lg bg-muted">
               <Info className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
               <div className="flex flex-col gap-1">
@@ -127,18 +154,26 @@ export function UploadSection() {
                 </p>
               </div>
               {isUsingCsvData && <Badge className="bg-success text-success-foreground ml-auto">CSV Loaded</Badge>}
-            </div>
+            </div> */}
 
             {/* Expected Format */}
             <div className="flex flex-col gap-2">
-              <h3 className="text-sm font-semibold text-foreground">Expected CSV Format</h3>
+              <h3 className="text-sm font-semibold text-foreground">
+                Expected CSV Format
+              </h3>
               <div className="overflow-auto rounded-lg border border-border">
                 <table className="w-full text-xs">
                   <thead>
                     <tr className="bg-muted">
-                      <th className="text-left py-2 px-3 font-semibold text-muted-foreground">Column</th>
-                      <th className="text-left py-2 px-3 font-semibold text-muted-foreground">Description</th>
-                      <th className="text-left py-2 px-3 font-semibold text-muted-foreground">Example</th>
+                      <th className="text-left py-2 px-3 font-semibold text-muted-foreground">
+                        Column
+                      </th>
+                      <th className="text-left py-2 px-3 font-semibold text-muted-foreground">
+                        Description
+                      </th>
+                      <th className="text-left py-2 px-3 font-semibold text-muted-foreground">
+                        Example
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -150,14 +185,22 @@ export function UploadSection() {
                       ["parent_name", "Parent's name", "Hari Shrestha"],
                       ["spouse", "Spouse name (optional)", "Sita Tamang"],
                       ["picture", "Photo URL or path", "https://..."],
-                      ["municipality", "Municipality name", "Banepa Municipality"],
+                      [
+                        "municipality",
+                        "Municipality name",
+                        "Banepa Municipality",
+                      ],
                       ["ward", "Ward number", "Ward 5"],
                       ["booth", "Booth number", "Booth 3"],
                     ].map(([col, desc, example]) => (
                       <tr key={col} className="border-t border-border/50">
-                        <td className="py-2 px-3 font-mono text-primary">{col}</td>
+                        <td className="py-2 px-3 font-mono text-primary">
+                          {col}
+                        </td>
                         <td className="py-2 px-3 text-foreground">{desc}</td>
-                        <td className="py-2 px-3 text-muted-foreground">{example}</td>
+                        <td className="py-2 px-3 text-muted-foreground">
+                          {example}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -168,5 +211,5 @@ export function UploadSection() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
